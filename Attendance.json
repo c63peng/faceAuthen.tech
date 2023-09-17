@@ -17,6 +17,16 @@
     {
         "name": "JOEY-WANG",
         "attendance": "true",
-        "attendanceTime": "23:41:31"
+        "attendanceTime": "00:38:52"
+    },
+    {
+        "name": "ELON-MUSK",
+        "attendance": "true",
+        "attendanceTime": "00:38:25"
+    },
+    {
+        "name": "STEVE-ROSS",
+        "attendance": "false",
+        "attendanceTime": "00:00:00"
     }
 ]

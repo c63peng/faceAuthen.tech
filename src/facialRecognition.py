@@ -1,9 +1,9 @@
 import json
 import face_recognition
 import cv2
-import numpy as np
 import os
 import datetime
+import numpy as np
 
 # Finds encodings for the face in the images to be used for facial recognition
 def getEncodings(images):
@@ -16,7 +16,7 @@ def getEncodings(images):
 
 # If a person's attendance is not in file, add their name to the file with the date of their attendance,
 # Otherwise just update their attendance and time for the existing entry
-def markAttendance(name):
+def updatePersonAttendanceInfo(name):
     with open('Attendance.json', 'r+') as file:
         attendees = json.load(file)
         names = []
@@ -76,28 +76,35 @@ capture = cv2.VideoCapture(0)
  
 
 while True:
-    success, img = capture.read()
+    success, img = capture.read() # Captures a frame from the video and stores it in img
 
     imgResized = cv2.resize(img, (0,0), None, 0.25, 0.25)
  
-    facesCurFrame = face_recognition.face_locations(imgResized)
-    encodesCurFrame = face_recognition.face_encodings(imgResized,facesCurFrame)
+    # Store the locations and face encodings for the faces in the video capture
+    faceLocations = face_recognition.face_locations(imgResized)
+    facesDisplayedEncodings = face_recognition.face_encodings(imgResized, faceLocations)
  
-    for encodeFace, faceLoc in zip(encodesCurFrame,facesCurFrame):
-        matches = face_recognition.compare_faces(faceEncodings,encodeFace)
-        faceDis = face_recognition.face_distance(faceEncodings,encodeFace)
-        matchIndex = np.argmin(faceDis)
+    # Loop through the detected faces and their encodings
+    for encode, location in zip(facesDisplayedEncodings,faceLocations):
+        # Compare the encoding of the face in the capture to the stored face encodings in Images
+        faceComparisons = face_recognition.compare_faces(faceEncodings, encode)
+
+        # Evaluates how similar faces are to the stored face images
+        faceSimilarities = face_recognition.face_distance(faceEncodings, encode)
+
+        # Get index of the face with the closest similarity
+        minIndex = np.argmin(faceSimilarities)
  
-        if matches[matchIndex]:
-            name = names[matchIndex].upper()
-            print(name)
-            y1, x2, y2, x1 = faceLoc
-            y1, x2, y2, x1 = y1*4,x2*4,y2*4,x1*4
-            cv2.rectangle(img,(x1,y1), (x2,y2), (0,255,0), 2)
-            cv2.rectangle(img,(x1,y2-35), (x2,y2), (0,255,0), cv2.FILLED)
-            cv2.putText(img,name,(x1+6,y2-6), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 2)
-            markAttendance(name)
+        # If a match found, post label on person's face and update their attendance info on file
+        if faceComparisons[minIndex]:
+            name = names[minIndex].upper()
+            y1, x2, y2, x1 = location
+            y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
+            cv2.rectangle(img, (x1,y1), (x2,y2), (255,0,0), 2)
+            cv2.rectangle(img, (x1,y2-50), (x2,y2), (255,0,0), cv2.FILLED)
+            cv2.putText(img, name, (x1+35,y2-5), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 2)
+            updatePersonAttendanceInfo(name)
  
-    cv2.imshow('Webcam',img)
+    cv2.imshow('Face Recognition', img)
     cv2.waitKey(1)
 

@@ -7,6 +7,8 @@ from scipy.special import softmax
 import numpy as np
 import pandas as pd
 from taipy.gui import Gui, notify
+import cv2
+import json
 
 webcam_md = """<|toggle|theme|>
 
@@ -34,48 +36,28 @@ webcam_md = """<|toggle|theme|>
 <|{captured_label}|input|>
 |>
 """
+ 
+# Opening JSON file
+with open("Attendance.json", 'r+') as file:
+    attendees = json.load(file)
+    names = []
+    attendance = []
+    time_stamps = []
 
+    for persons in attendees: 
+        names.append(persons["name"])
+        attendance.append(persons["attendance"])
+        time_stamps.append(persons["attendanceTime"])
 
-MODEL = "sbcBI/sentiment_analysis_model"
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
 dataframe = pd.DataFrame(
     {
-        "Text": [""],
-        "Score Pos": [0.33],
-        "Score Neu": [0.33],
-        "Score Neg": [0.33],
-        "Overall": [0],
+        "Persons": [""],
+        "Name": names,
+        "Attendance": attendance,
+        "Time Checked In": time_stamps,
     }
 )
-
-dataframe2 = dataframe.copy()
-
-
-def analyze_text(input_text: str) -> dict:
-    """
-    Runs the sentiment analysis model on the text
-
-    Args:
-        - text (str): text to be analyzed
-
-    Returns:
-        - dict: dictionary with the scores
-    """
-    encoded_text = tokenizer(input_text, return_tensors="pt")
-    output = model(**encoded_text)
-    scores = output[0][0].detach().numpy()
-    scores = softmax(scores)
-
-    return {
-        "Text": input_text[:50],
-        "Score Pos": scores[2],
-        "Score Neu": scores[1],
-        "Score Neg": scores[0],
-        "Overall": scores[2] - scores[0],
-    }
-
 
 def local_callback(state) -> None:
     """

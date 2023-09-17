@@ -1,12 +1,7 @@
-
-""" Creates a sentiment analysis App using Taipy"""
-from transformers import AutoTokenizer
-from transformers import AutoModelForSequenceClassification
-from scipy.special import softmax
-
 import numpy as np
 import pandas as pd
 from taipy.gui import Gui, notify
+import json 
 
 webcam_md = """<|toggle|theme|>
 
@@ -35,36 +30,27 @@ webcam_md = """<|toggle|theme|>
 |>
 """
 
+with open("Attendance.json", 'r') as file:
+    attendees = json.load(file)
+    names = [] 
+    for person in attendees:
+        names.append(person["name"])
 
-MODEL = "sbcBI/sentiment_analysis_model"
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+    attends = []
+    for person in attendees:
+        attends.append(person["attendance"])
+
+    time_stamp =[]
+    for person in attendees:
+        time_stamp.append(person["attendanceTime"])
 
 dataframe = pd.DataFrame(
     {
-        "Persons": [""],
-        "Name": [""],
-        "Clearance Level": [""],
-        "Attendance": [""],
+        "Name": names,
+        "Attendance": attends,
+        "Time-Stamp": time_stamp,
     }
 )
-
-
-
-
-
-def local_callback(state) -> None:
-    """
-    Analyze the text and updates the dataframe
-
-    Args:
-        - state: state of the Taipy App
-    """
-    notify(state, "Info", f"The text is: {state.text}", True)
-    temp = state.dataframe.copy()
-    scores = analyze_text(state.text)
-    state.dataframe = temp.append(scores, ignore_index=True)
-    state.text = ""
 
 
 path = ""
@@ -73,37 +59,12 @@ treatment = 0
 # Attendance page
 page_file = """
 
-<|Table|expandable|
+<|Persons|expandable|
 <|{dataframe}|table|width=100%|number_format=%.2f|>
 |>
 
 """
 
-
-def analyze_file(state) -> None:
-    """
-    Analyse the lines in a text file
-
-    Args:
-        - state: state of the Taipy App
-    """
-    state.dataframe = dataframe
-    state.treatment = 0
-    with open(state.path, "r", encoding="utf-8") as f:
-        data = f.read()
-        print(data)
-        file_list = list(data.split("\n"))
-
-    for i, input_text in enumerate(file_list):
-        state.treatment = int((i + 1) * 100 / len(file_list))
-        temp = state.dataframe2.copy()
-        scores = analyze_text(input_text)
-        print(scores)
-        state.dataframe = temp.append(scores, ignore_index=True)
-
-    state.path = None
-
-# intergrating pages urls
 pages = {
     "/": "<|toggle|theme|>\n<center>\n<|navbar|>\n</center>",
     "Camera": webcam_md,

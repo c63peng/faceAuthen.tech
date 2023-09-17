@@ -1,28 +1,18 @@
 [
     {
-        "name": "Razi Nameerah",
+        "name": "ELON-MUSK",
         "attendance": "false",
         "attendanceTime": "00:00:00"
     },
     {
-        "name": "Elon Musk",
-        "attendance": "false",
-        "attendanceTime": "00:00:00"
-    },
-    {
-        "name": "Douglas Harder",
-        "attendance": "false",
-        "attendanceTime": "00:00:00"
+        "name": "DOUGLAS-HARDER",
+        "attendance": "true",
+        "attendanceTime": "00:43:53"
     },
     {
         "name": "JOEY-WANG",
-        "attendance": "true",
-        "attendanceTime": "00:38:52"
-    },
-    {
-        "name": "ELON-MUSK",
-        "attendance": "true",
-        "attendanceTime": "00:38:25"
+        "attendance": "false",
+        "attendanceTime": "00:00:00"
     },
     {
         "name": "STEVE-ROSS",

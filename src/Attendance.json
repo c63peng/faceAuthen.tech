@@ -1,4 +1,5 @@
-    [
+{
+    "attendees": [
         {
             "name": "Razi Nameerah",
             "attendance": "true",
@@ -15,3 +16,4 @@
             "attendanceTime": "00:00:00"
         }
     ]
+}

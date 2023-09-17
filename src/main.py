@@ -1,9 +1,3 @@
-# from taipy import Gui
-from imutils import paths 
-# import face-recognition
-
-# Gui(page="# Getting started with *Taipy*").run() # use_reloader=True
-
 import cv2
 import numpy as np
 import face_recognition
@@ -11,17 +5,19 @@ import os
 from datetime import datetime
 # from PIL import ImageGrab
  
-path = './images'
+path = './ImagesAttendance'
 images = []
 classNames = []
-myList = os.listdir(path)
+myList = os.listdir(path) 
 print(myList)
 for cl in myList:
     curImg = cv2.imread(f'{path}/{cl}')
     images.append(curImg)
     classNames.append(os.path.splitext(cl)[0])
+print("Class Names: ")
 print(classNames)
  
+
 def findEncodings(images):
     encodeList = []
     for img in images:
@@ -30,6 +26,7 @@ def findEncodings(images):
         encodeList.append(encode)
     return encodeList
  
+
 def markAttendance(name):
     with open('Attendance.csv','r+') as f:
         myDataList = f.readlines()
@@ -55,7 +52,8 @@ cap = cv2.VideoCapture(0)
  
 while True:
     success, img = cap.read()
-    #img = captureScreen()
+
+    # img = captureScreen()
     imgS = cv2.resize(img,(0,0),None,0.25,0.25)
     imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
  

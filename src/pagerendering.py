@@ -30,7 +30,7 @@ webcam_md = """<|toggle|theme|>
 |>
 """
 
-with open("Attendance.json", 'r') as file:
+with open("src/Attendance.json", 'r') as file:
     attendees = json.load(file)
     names = [] 
     for person in attendees:

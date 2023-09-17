@@ -7,8 +7,6 @@ from scipy.special import softmax
 import numpy as np
 import pandas as pd
 from taipy.gui import Gui, notify
-import cv2
-import json
 
 webcam_md = """<|toggle|theme|>
 
@@ -36,28 +34,24 @@ webcam_md = """<|toggle|theme|>
 <|{captured_label}|input|>
 |>
 """
- 
-# Opening JSON file
-with open("Attendance.json", 'r+') as file:
-    attendees = json.load(file)
-    names = []
-    attendance = []
-    time_stamps = []
 
-    for persons in attendees: 
-        names.append(persons["name"])
-        attendance.append(persons["attendance"])
-        time_stamps.append(persons["attendanceTime"])
 
+MODEL = "sbcBI/sentiment_analysis_model"
+tokenizer = AutoTokenizer.from_pretrained(MODEL)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
 dataframe = pd.DataFrame(
     {
         "Persons": [""],
-        "Name": names,
-        "Attendance": attendance,
-        "Time Checked In": time_stamps,
+        "Name": [""],
+        "Clearance Level": [""],
+        "Attendance": [""],
     }
 )
+
+
+
+
 
 def local_callback(state) -> None:
     """
@@ -80,7 +74,7 @@ treatment = 0
 page_file = """
 
 <|Table|expandable|
-<|{dataframe2}|table|width=100%|number_format=%.2f|>
+<|{dataframe}|table|width=100%|number_format=%.2f|>
 |>
 
 """
@@ -93,7 +87,7 @@ def analyze_file(state) -> None:
     Args:
         - state: state of the Taipy App
     """
-    state.dataframe2 = dataframe2
+    state.dataframe = dataframe
     state.treatment = 0
     with open(state.path, "r", encoding="utf-8") as f:
         data = f.read()
@@ -105,7 +99,7 @@ def analyze_file(state) -> None:
         temp = state.dataframe2.copy()
         scores = analyze_text(input_text)
         print(scores)
-        state.dataframe2 = temp.append(scores, ignore_index=True)
+        state.dataframe = temp.append(scores, ignore_index=True)
 
     state.path = None
 

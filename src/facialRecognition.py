@@ -42,19 +42,19 @@ def updatePersonAttendanceInfo(name):
             }
             attendees.append(newEntry)
 
-    with open("Attendance.json", 'w') as file:
+    with open("src/Attendance.json", 'w') as file:
         json.dump(attendees, file, indent=4, separators=(',',': '))
 
 
 # Clear attendance file
-with open("Attendance.json", 'r') as file:
+with open("src/Attendance.json", 'r') as file:
     attendees = json.load(file)
 
 for person in attendees:
     person["attendance"] = 'false'
     person["attendanceTime"] = "00:00:00"
 
-with open("Attendance.json", 'w') as file:
+with open("src/Attendance.json", 'w') as file:
     json.dump(attendees, file, indent=4)
 
 

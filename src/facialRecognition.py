@@ -17,7 +17,7 @@ def getEncodings(images):
 # If a person's attendance is not in file, add their name to the file with the date of their attendance,
 # Otherwise just update their attendance and time for the existing entry
 def updatePersonAttendanceInfo(name):
-    with open('Attendance.json', 'r+') as file:
+    with open('src/Attendance.json', 'r+') as file:
         attendees = json.load(file)
         names = []
 
